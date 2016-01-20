@@ -4,10 +4,12 @@
   "description": "Starter project for Angular2 applications using TypeScript",
   "main": "index.html",
   "scripts": {
-    "tsc": "tsc.cmd",
-    "tsc:w": "tsc.cmd -w",
-    "lite": "lite-server --verbose --open src",
-    "start": "concurrent \"npm run tsc:w\" \"npm run lite\" "
+    "postinstall": "concurrent \"tsd install\"",
+    "build": "node ./node_modules/gulp/bin/gulp.js build",
+    "clean": "node ./node_modules/gulp/bin/gulp.js clean",
+    "clean-build": "node ./node_modules/gulp/bin/gulp.js build:clean",
+    "serve": "node ./node_modules/gulp/bin/gulp.js serve",
+    "default": "node ./node_modules/gulp/bin/gulp.js"
   },
   "keywords": [
     "Angular2",
@@ -16,7 +18,8 @@
     "TSLint",
     "TypeDoc",
     "starter",
-    "project"
+    "project",
+    "AsyncPipe"
   ],
   "author": "Ionut Costica",
   "license": "ISC",
@@ -38,7 +41,7 @@
     "gulp-print": "^2.0.1",
     "gulp-rimraf": "^0.2.0",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-tslint": "^4.2.2",
+    "gulp-tslint": "^4.3.1",
     "gulp-typedoc": "^1.2.1",
     "gulp-typescript": "^2.10.0",
     "gulp-uglify": "^1.5.1",

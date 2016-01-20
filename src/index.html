@@ -16,27 +16,12 @@
 	<!-- endinject -->
 	<script>
 		System.config({
-//			baseUrl: './src/app',
-//			defaultJSExtensions: true,
-//			bundles: {
-//				'../node_modules/angular2/bundles/angular2.dev.js': ['angular2/*']
-//			},
 			packages: {
 				js: {
 					format: 'register',
 					defaultExtension: 'js'
-				}//,
-//				angular2: {
-//					format: 'register'
-//				}
-			}/*,
-			paths: {
-				'angular2/http': '../node_modules/angular2/bundles/router.dev.js',
-				'angular2/router': '../node_modules/angular2/bundles/http.dev.js',
-				'angular2/!*': '../node_modules/angular2/bundles/angular2.dev.js',
-				'rx/!*': '../node_modules/rxjs/bundles/Rx.js',
-				'app/!*': './src/app/!*.js'
-			}*/
+				}
+			}
 		});
 		System.import('js/app/boot')
 			.catch(console.error.bind(console));

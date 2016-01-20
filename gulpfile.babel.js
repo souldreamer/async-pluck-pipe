@@ -79,7 +79,7 @@ gulp.task('watch', watch);
 gulp.task('ts:doc', tsDoc);
 gulp.task('copy:assets', gulp.series(copyLibs, copyIndex, copyAssets));
 gulp.task('clean', clean);
-gulp.task('build', gulp.parallel('copy:assets', 'ts:lint', 'ts:compile'));
+gulp.task('build', gulp.parallel('copy:assets', /*'ts:lint',*/ 'ts:compile'));
 gulp.task('build:clean', gulp.series('clean', 'build'));
 gulp.task('serve', gulp.parallel('watch', gulp.series('build:clean', serve)));
 gulp.task('default', gulp.series('serve'));
@@ -122,7 +122,7 @@ function clean() {
 clean.description = 'Cleaning entire dist';
 
 function watch() {
-	gulp.watch([settings.allTypeScript], gulp.series('ts:lint', 'ts:compile'));
+	gulp.watch([settings.allTypeScript], gulp.series(/*'ts:lint',*/ 'ts:compile'));
 	gulp.watch([settings.indexHtml], gulp.series('copy:assets'));
 	gulp.watch([
 		`${settings.sourceApp}/**/*.html`,
@@ -136,27 +136,27 @@ watch.description = 'Watching TypeScript sources';
 function serve() {
 	browserSync({
 		port: 3000,
-//		files: settings.watchFiles,
-//		injectChanges: true,
+		files: settings.watchFiles,
+		injectChanges: true,
 		logFileChanges: true,
 		logLevel: 'info',
 		logPrefix: 'event-planner',
 		notify: true,
 		reloadDelay: 0,
-//		ghostMode: {
-//			clicks: true,
-//			forms: true,
-//			scroll: true
-//		},
-//		tunnel: true,
-//		open: 'tunnel',
+		ghostMode: {
+			clicks: true,
+			forms: true,
+			scroll: true
+		},
+		tunnel: true,
+		open: 'tunnel',
 		server: {
-			baseDir: [settings.dist]//,
-//			middleware: [historyApiFallback()]//superstatic({debug: false})
-		}//,
-//		ui: {
-//			port: 3030
-//		}
+			baseDir: [settings.dist],
+			middleware: [historyApiFallback()]//superstatic({debug: false})
+		},
+		ui: {
+			port: 3030
+		}
 	});
 }
 serve.description = 'Starting browserSync';
