@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base href="/">
+	<link rel="stylesheet" href="styles/main.css">
+	<!-- inject:libs -->
+	<!--   add wanted libs to gulpfile -->
+	<script src="app/lib/es6-shim.js"></script>
+	<script src="app/lib/angular2-polyfills.js"></script>
+	<script src="app/lib/system.src.js"></script>
+	<script src="app/lib/Rx.js"></script>
+	<script src="app/lib/angular2.dev.js"></script>
+	<script src="app/lib/router.dev.js"></script>
+	<script src="app/lib/http.dev.js"></script>
+	<!-- endinject -->
+	<script>
+		System.config({
+//			baseUrl: './src/app',
+//			defaultJSExtensions: true,
+//			bundles: {
+//				'../node_modules/angular2/bundles/angular2.dev.js': ['angular2/*']
+//			},
+			packages: {
+				js: {
+					format: 'register',
+					defaultExtension: 'js'
+				}//,
+//				angular2: {
+//					format: 'register'
+//				}
+			}/*,
+			paths: {
+				'angular2/http': '../node_modules/angular2/bundles/router.dev.js',
+				'angular2/router': '../node_modules/angular2/bundles/http.dev.js',
+				'angular2/!*': '../node_modules/angular2/bundles/angular2.dev.js',
+				'rx/!*': '../node_modules/rxjs/bundles/Rx.js',
+				'app/!*': './src/app/!*.js'
+			}*/
+		});
+		System.import('js/app/boot')
+			.catch(console.error.bind(console));
+	</script>
+</head>
+
+<body>
+<main-app>Loading...</main-app>
+</body>
+
+</html>

@@ -1,0 +1,63 @@
+{
+  "name": "angular2-starter",
+  "version": "0.0.1",
+  "description": "Starter project for Angular2 applications using TypeScript",
+  "main": "index.html",
+  "scripts": {
+    "tsc": "tsc.cmd",
+    "tsc:w": "tsc.cmd -w",
+    "lite": "lite-server --verbose --open src",
+    "start": "concurrent \"npm run tsc:w\" \"npm run lite\" "
+  },
+  "keywords": [
+    "Angular2",
+    "TypeScript",
+    "Gulp4",
+    "TSLint",
+    "TypeDoc",
+    "starter",
+    "project"
+  ],
+  "author": "Ionut Costica",
+  "license": "ISC",
+  "devDependencies": {
+    "babel": "^6.3.26",
+    "babel-core": "^6.4.0",
+    "babel-preset-es2015": "^6.3.13",
+    "concurrently": "^1.0.0",
+    "connect-history-api-fallback": "^1.1.0",
+    "del": "^2.2.0",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-debug": "^2.1.2",
+    "gulp-if": "^2.0.0",
+    "gulp-inject": "^3.0.0",
+    "gulp-inline-ng2-template": "0.0.10",
+    "gulp-order": "^1.1.1",
+    "gulp-preprocess": "^2.0.0",
+    "gulp-print": "^2.0.1",
+    "gulp-rimraf": "^0.2.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-tslint": "^4.2.2",
+    "gulp-typedoc": "^1.2.1",
+    "gulp-typescript": "^2.10.0",
+    "gulp-uglify": "^1.5.1",
+    "lite-server": "^1.3.2",
+    "live-server": "^0.9.0",
+    "merge2": "^0.3.6",
+    "sort-stream": "^1.0.1",
+    "superstatic": "^4.0.1",
+    "tslint": "^3.2.1",
+    "typescript": "^1.8.0-dev.20160113",
+    "typings": "^0.6.0"
+  },
+  "dependencies": {
+    "angular2": "^2.0.0-beta.1",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.34.1",
+    "reflect-metadata": "^0.1.3",
+    "rxjs": "^5.0.0-beta.1",
+    "systemjs": "^0.19.15",
+    "zone.js": "^0.5.10"
+  }
+}

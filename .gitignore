@@ -1,3 +1,15 @@
+/typings
+/app/**/*.js
+/app/**/*.map
+/node_modules
+/jspm_packages
+/bower_components
+npm-debug.log
+/dist
+/docs
+
+
+############################# DEFAULTS #############################
 # Logs
 logs
 *.log
