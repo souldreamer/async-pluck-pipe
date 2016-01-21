@@ -12,6 +12,7 @@ import {
 	Observable,
 	EventEmitter
 } from 'angular2/src/facade/async';
+import {ChangeDetectionUtil} from 'angular2/src/core/change_detection/change_detection_util';
 import {isPresent} from 'angular2/src/facade/lang';
 import {AsyncPipe} from 'angular2/common';
 
@@ -21,7 +22,7 @@ export class AsyncPluckPipe
 extends AsyncPipe
 implements PipeTransform, OnDestroy {
 	constructor(public ref: ChangeDetectorRef) {
-		super(ref);
+		super(ref);let x: ChangeDetectionUtil;
 	}
 
 	ngOnDestroy(): void {
@@ -34,11 +35,7 @@ implements PipeTransform, OnDestroy {
 		obj: Observable<any> | Promise<any> | EventEmitter<any>,
 		args?: any[]
 	): any {
-		let asyncObj: any = super.transform(obj, args);
-		if (asyncObj instanceof WrappedValue) {
-			asyncObj = (<WrappedValue>asyncObj).wrapped;
-		}
-		let value: any = asyncObj;
+		let value: any = ChangeDetectionUtil.unwrapValue(super.transform(obj, args));
 		for(let arg of args) {
 			if(isPresent(value)) value = value[arg];
 		}
