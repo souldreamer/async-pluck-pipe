@@ -22,7 +22,7 @@ export class AsyncPluckPipe
 extends AsyncPipe
 implements PipeTransform, OnDestroy {
 	constructor(public ref: ChangeDetectorRef) {
-		super(ref);let x: ChangeDetectionUtil;
+		super(ref);
 	}
 
 	ngOnDestroy(): void {
