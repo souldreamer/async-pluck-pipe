@@ -1,10 +1,24 @@
-Angular2 Starter Project
+Angular2 asyncPluck Pipe
 ===
-#### Angular2 + TypeScript + TSLint + TypeDoc
+Extension to the basic `async` pipe that subscribes to a promise/observable
+and shows the value once it's resolved/emitted, but additionally provides
+the option to pluck a specific sub-property of the resulting object.
 
-##### Using Gulp4 + npm3
+`{{ observable | asyncPluck:'name':'first'}}` is equivalent to writing
+`{{ (observable | async)?.name?.first }}`.
+
+This is mostly an exercise in dealing with the Angular2 source code
+and in extending the base elements while keeping with the style of the sources
+(which means using the internal Angular2 functions as much as possible to
+both keep things DRY and to improve the chances that future versions of
+Angular2 will still be compatible with the extended code).
 
 ---
+
+## Todo:
+- [ ] docs: improve/write documentation
+- [ ] test: testing
+- [ ] fix: `gulp ts:lint` errors out
 
 ## Installation
 * run `npm install`
