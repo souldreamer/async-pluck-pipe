@@ -48,6 +48,13 @@ class Settings {
 			'./node_modules/angular2/bundles/router.dev.js',
 			'./node_modules/angular2/bundles/http.dev.js'
 		];
+
+		this.testBase = './tests';
+		this.testFiles = [
+			`${this.testBase}/**/*.ts`
+		];
+		this.testFilesOut = `${this.testBase}/compiled`;
+		this.testMain = `${this.testBase}/unit-tests.html`;
 	}
 }
 const settings = new Settings();
@@ -83,6 +90,9 @@ gulp.task('build', gulp.parallel('copy:assets', /*'ts:lint',*/ 'ts:compile'));
 gulp.task('build:clean', gulp.series('clean', 'build'));
 gulp.task('serve', gulp.parallel('watch', gulp.series('build:clean', serve)));
 gulp.task('default', gulp.series('serve'));
+
+gulp.task('tests:compile', testsCompile);
+gulp.task('tests:run', testRun);
 
 function tsLint() {
 	return gulp
@@ -244,3 +254,23 @@ function copyAssets() {
 ]);
 }
 copyAssets.description = 'Copying assets to distribution folder';
+
+function testsCompile() {
+	var tsResult = gulp
+		.src([settings.testFiles, settings.libraryTypeScriptDefinitions])
+		.pipe(sourcemaps.init())
+		.pipe(tsc(tsProject));
+
+	return merge([
+//		tsResult.dts.pipe(gulp.dest(settings.typingsOutputPath)),
+		tsResult.js
+			.pipe(sourcemaps.write('.'))
+			.pipe(gulp.dest(settings.testFilesOut))
+	]);
+}
+testsCompile.description = 'Compiling test files';
+
+function testsRun() {
+
+}
+testsRun.description = 'Running tests';
