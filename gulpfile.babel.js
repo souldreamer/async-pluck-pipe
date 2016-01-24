@@ -54,6 +54,8 @@ class Settings {
 			`${this.testBase}/**/*.ts`
 		];
 		this.testFilesOut = `${this.testBase}/compiled`;
+		this.testFilesOutGlob = `${this.testFilesOut}/**/*.js`;
+		this.testMainPre = `${this.testBase}/unit-tests.pre.html`;
 		this.testMain = `${this.testBase}/unit-tests.html`;
 	}
 }
@@ -74,7 +76,7 @@ const superstatic = require('superstatic');
 const typedoc = require('gulp-typedoc');
 const historyApiFallback = require('connect-history-api-fallback');
 const preprocess = require('gulp-preprocess');
-const inlineNg2Template = require('gulp-inline-ng2-template');
+//const inlineNg2Template = require('gulp-inline-ng2-template');
 const sortStream = require('sort-stream');
 const print = require('gulp-print');
 const order = require('gulp-order');
@@ -92,7 +94,8 @@ gulp.task('serve', gulp.parallel('watch', gulp.series('build:clean', serve)));
 gulp.task('default', gulp.series('serve'));
 
 gulp.task('tests:compile', testsCompile);
-gulp.task('tests:run', testRun);
+gulp.task('tests:build', gulp.series('tests:compile'));
+gulp.task('tests:run', testsRun);
 
 function tsLint() {
 	return gulp
@@ -103,17 +106,11 @@ function tsLint() {
 tsLint.description = 'Linting TypeScript sources';
 
 function tsCompile() {
-	var tsResult = gulp
-		.src([settings.allTypeScript, settings.libraryTypeScriptDefinitions])
-		.pipe(sourcemaps.init())
-		.pipe(tsc(tsProject));
-
-	return merge([
-		tsResult.dts.pipe(gulp.dest(settings.typingsOutputPath)),
-		tsResult.js
-			.pipe(sourcemaps.write('.'))
-			.pipe(gulp.dest(settings.tsOutputPath))
-	]);
+	return compileTypescript(
+		[settings.allTypeScript, settings.libraryTypeScriptDefinitions],
+		settings.tsOutputPath,
+		settings.typingsOutputPath
+	);
 }
 tsCompile.description = 'Compiling TypeScript sources';
 
@@ -256,17 +253,7 @@ function copyAssets() {
 copyAssets.description = 'Copying assets to distribution folder';
 
 function testsCompile() {
-	var tsResult = gulp
-		.src([settings.testFiles, settings.libraryTypeScriptDefinitions])
-		.pipe(sourcemaps.init())
-		.pipe(tsc(tsProject));
-
-	return merge([
-//		tsResult.dts.pipe(gulp.dest(settings.typingsOutputPath)),
-		tsResult.js
-			.pipe(sourcemaps.write('.'))
-			.pipe(gulp.dest(settings.testFilesOut))
-	]);
+	return compileTypescript([settings.testFiles], settings.testFilesOut);
 }
 testsCompile.description = 'Compiling test files';
 
@@ -274,3 +261,23 @@ function testsRun() {
 
 }
 testsRun.description = 'Running tests';
+
+//**************************** UTILITY FUNCTIONS ****************************
+
+function compileTypescript(sources: Array<any>, jsOutput: String, dtsOutput: String = null) {
+	let tsResult = gulp
+		.src(sources)
+		.pipe(sourcemaps.init())
+		.pipe(tsc(tsProject));
+
+	let resultArray = [];
+	if (dtsOutput !== null && dtsOutput !== undefined) {
+		resultArray.push(tsResult.dts.pipe(gulp.dest(dtsOutput)));
+	}
+
+	resultArray.push(tsResult.js
+		.pipe(sourcemaps.write('.'))
+		.pipe(gulp.dest(jsOutput)));
+
+	return merge(resultArray);
+}

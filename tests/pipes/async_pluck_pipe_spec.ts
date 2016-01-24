@@ -65,7 +65,6 @@ export function main() {
 						}, 0)
 					}));
 
-
 				it("should return same value when nothing has changed since the last call",
 					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
 						pipe.transform(emitter);
@@ -200,7 +199,6 @@ export function main() {
 						pipe.transform(completer.promise);
 						expect(pipe.transform(completer.promise)).toBe(null);
 						completer.resolve(message);
-
 
 						TimerWrapper.setTimeout(() => {
 							expect(pipe.transform(completer.promise)).toEqual(new WrappedValue(message));
