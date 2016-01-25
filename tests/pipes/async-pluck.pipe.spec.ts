@@ -1,11 +1,8 @@
 // based on https://github.com/angular/angular/blob/master/modules/angular2/test/common/pipes/async_pipe_spec.ts
 ///<reference path="../../typings/jasmine/jasmine.d.ts" />
 import {
-	ddescribe,
 	describe,
 	it,
-	iit,
-	xit,
 	expect,
 	beforeEach,
 	afterEach,

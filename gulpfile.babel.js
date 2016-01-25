@@ -94,8 +94,12 @@ gulp.task('serve', gulp.parallel('watch', gulp.series('build:clean', serve)));
 gulp.task('default', gulp.series('serve'));
 
 gulp.task('tests:compile', testsCompile);
-gulp.task('tests:build', gulp.series('tests:compile'));
-gulp.task('tests:run', testsRun);
+gulp.task('tests:build:index', testsIndexBuild);
+gulp.task('tests:clean', testsClean);
+gulp.task('tests:watch', testsWatch);
+gulp.task('tests:build', gulp.series('tests:compile', 'tests:build:index'));
+gulp.task('tests:clean:build', gulp.series('tests:clean', 'tests:build'));
+gulp.task('tests:run', gulp.parallel('tests:watch', gulp.series('tests:clean:build', testsRun)));
 
 function tsLint() {
 	return gulp
@@ -253,18 +257,52 @@ function copyAssets() {
 copyAssets.description = 'Copying assets to distribution folder';
 
 function testsCompile() {
-	return compileTypescript([settings.testFiles], settings.testFilesOut);
+	return compileTypescript(settings.testFiles, settings.testFilesOut);
 }
 testsCompile.description = 'Compiling test files';
 
 function testsRun() {
+	browserSync({
+		port: 3050,
+		files: [settings.testFilesOutGlob, settings.testMain],
+		injectChanges: true,
+		logFileChanges: true,
+		logLevel: 'info',
+		logPrefix: 'async-pipe-tests',
+		reloadDelay: 0,
+		server: {
+			baseDir: [settings.testBase],
+			index: settings.testMain
+		}
+	});
 
 }
 testsRun.description = 'Running tests';
 
+function testsIndexBuild() {
+	return gulp
+		.src(settings.testMainPre)
+		.pipe(inject(
+			gulp.src(settings.testFilesOutGlob, {read: false}),
+			{ relative: true, starttag: '<!-- inject:tests -->'}
+		))
+		.pipe(gulp.dest('./tests'));
+}
+testsIndexBuild.description = 'Build unit-tests.html';
+
+function testsClean() {
+	return del([settings.testFilesOut, settings.testMain]);
+}
+testsClean.description = 'Clean compiled test files';
+
+function testsWatch() {
+	gulp.watch([settings.testMainPre], gulp.series('tests:build:index'));
+	gulp.watch([settings.testFiles], gulp.series('tests:build'));
+}
+
 //**************************** UTILITY FUNCTIONS ****************************
 
-function compileTypescript(sources: Array<any>, jsOutput: String, dtsOutput: String = null) {
+function compileTypescript(sources, jsOutput, dtsOutput) {
 	let tsResult = gulp
 		.src(sources)
 		.pipe(sourcemaps.init())
