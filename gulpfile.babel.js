@@ -57,6 +57,14 @@ class Settings {
 		this.testFilesOutGlob = `${this.testFilesOut}/**/*.js`;
 		this.testMainPre = `${this.testBase}/unit-tests.pre.html`;
 		this.testMain = `${this.testBase}/unit-tests.html`;
+		this.testLibs = [
+			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.css',
+			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
+			'./node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
+			'./node_modules/jasmine-core/lib/jasmine-core/boot.js',
+			'./node_modules/systemjs/dist/system.src.js'
+		];
+		this.testLibsOutputPath = `${this.testFilesOut}/lib`;
 	}
 }
 const settings = new Settings();
@@ -80,6 +88,7 @@ const preprocess = require('gulp-preprocess');
 const sortStream = require('sort-stream');
 const print = require('gulp-print');
 const order = require('gulp-order');
+const rename = require('gulp-rename');
 
 gulp.task('ts:lint', tsLint);
 gulp.task('ts:compile', tsCompile);
@@ -95,12 +104,13 @@ gulp.task('default', gulp.series('serve'));
 
 gulp.task('tests:compile', testsCompile);
 gulp.task('tests:build:index', testsIndexBuild);
+gulp.task('tests:copy:libs'. testsCopyLibs);/*
 gulp.task('tests:clean', testsClean);
 gulp.task('tests:watch', testsWatch);
-gulp.task('tests:build', gulp.series('tests:compile', 'tests:build:index'));
+gulp.task('tests:build', gulp.series(gulp.parallel('tests:copy:libs', 'tests:compile'), 'tests:build:index'));
 gulp.task('tests:clean:build', gulp.series('tests:clean', 'tests:build'));
 gulp.task('tests:run', gulp.parallel('tests:watch', gulp.series('tests:clean:build', testsRun)));
-
+*/
 function tsLint() {
 	return gulp
 		.src(settings.allTypeScript)
@@ -252,7 +262,7 @@ function copyAssets() {
 		gulp
 			.src([...settings.allAssets, `!${settings.indexHtml}`])
 		.pipe(gulp.dest(settings.dist))
-]);
+	]);
 }
 copyAssets.description = 'Copying assets to distribution folder';
 
@@ -272,7 +282,7 @@ function testsRun() {
 		reloadDelay: 0,
 		server: {
 			baseDir: [settings.testBase],
-			index: settings.testMain
+			index: settings.testMain.replace(`${settings.testBase}/`, '')
 		}
 	});
 
@@ -280,15 +290,34 @@ function testsRun() {
 testsRun.description = 'Running tests';
 
 function testsIndexBuild() {
+	let libFileNames = settings.testLibs.map(lib => lib.substr(lib.lastIndexOf('/') + 1));
+
 	return gulp
 		.src(settings.testMainPre)
 		.pipe(inject(
 			gulp.src(settings.testFilesOutGlob, {read: false}),
 			{ relative: true, starttag: '<!-- inject:tests -->'}
 		))
-		.pipe(gulp.dest('./tests'));
+		.pipe(inject(
+			gulp
+				.src(`${settings.testLibsOutputPath}/*.js`, {read: false})
+				.pipe(sortStream(keepArrayOrderSort(libFileNames))),
+			{
+				relative: true,
+				starttag: '<!-- inject:libs -->'
+			}
+		))
+		.pipe(rename(settings.testMain))
+		.pipe(gulp.dest('.'));
 }
 testsIndexBuild.description = 'Build unit-tests.html';
+
+function testsCopyLibs() {
+	return gulp
+		.src(settings.testLibs)
+		.pipe(gulp.dest(settings.testLibsOutputPath));
+}
+testsCopyLibs.description = 'Copy libs used by tests';
 
 function testsClean() {
 	return del([settings.testFilesOut, settings.testMain]);
@@ -299,6 +328,7 @@ function testsWatch() {
 	gulp.watch([settings.testMainPre], gulp.series('tests:build:index'));
 	gulp.watch([settings.testFiles], gulp.series('tests:build'));
 }
+testsWatch.description = 'Watch test files for changes';
 
 //**************************** UTILITY FUNCTIONS ****************************
 

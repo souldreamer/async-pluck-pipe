@@ -1,5 +1,4 @@
 // based on https://github.com/angular/angular/blob/master/modules/angular2/test/common/pipes/async_pipe_spec.ts
-///<reference path="../../typings/jasmine/jasmine.d.ts" />
 import {
 	describe,
 	it,
@@ -11,7 +10,7 @@ import {
 	browserDetection
 } from 'angular2/testing_internal';
 import {isBlank} from 'angular2/src/facade/lang';
-import {AsyncPluckPipe} from '../src/app/pipes/async-pluck.pipe';
+import {AsyncPluckPipe} from '../../src/app/pipes/async-pluck.pipe';
 import {WrappedValue} from 'angular2/core';
 import {
 	EventEmitter,
@@ -35,8 +34,8 @@ export function main() {
 	describe("AsyncPipe functionality maintained", () => {
 
 		describe('Observable', () => {
-			var emitter;
-			var pipe;
+			var emitter: EventEmitter<any>;
+			var pipe: AsyncPluckPipe;
 			var ref: SpyChangeDetectorRef;
 			var message = {};
 
