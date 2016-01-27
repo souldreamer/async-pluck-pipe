@@ -107,8 +107,7 @@ gulp.task('tests:build:index', testsIndexBuild);
 gulp.task('tests:copy:libs'. testsCopyLibs);
 gulp.task('tests:clean', testsClean);
 gulp.task('tests:watch', testsWatch);
-//gulp.task('tests:build', gulp.series(gulp.parallel('tests:copylibs', 'tests:compile'), 'tests:buildindex'));
-gulp.task('tests:build', gulp.series('tests:copy:libs', 'tests:compile', 'tests:build:index'));
+gulp.task('tests:build', gulp.series(gulp.parallel(testsCopyLibs, 'tests:compile'), 'tests:build:index'));
 gulp.task('tests:clean:build', gulp.series('tests:clean', 'tests:build'));
 gulp.task('tests:run', gulp.parallel('tests:watch', gulp.series('tests:clean:build', testsRun)));
 
