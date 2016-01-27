@@ -42,7 +42,7 @@ export function main() {
 			beforeEach(() => {
 				emitter = new EventEmitter();
 				ref = new SpyChangeDetectorRef();
-				pipe = new AsyncPluckPipe(<ChangeDetectorRef>ref);
+				pipe = new AsyncPluckPipe(<any>ref);
 			});
 
 			describe("transform", () => {
@@ -130,7 +130,7 @@ export function main() {
 			beforeEach(() => {
 				completer = PromiseWrapper.completer();
 				ref = new SpyChangeDetectorRef();
-				pipe = new AsyncPluckPipe(<ChangeDetectorRef>ref);
+				pipe = new AsyncPluckPipe(<any>ref);
 			});
 
 			describe("transform", () => {
