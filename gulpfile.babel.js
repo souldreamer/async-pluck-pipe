@@ -58,7 +58,7 @@ class Settings {
 		this.testMainPre = `${this.testBase}/unit-tests.pre.html`;
 		this.testMain = `${this.testBase}/unit-tests.html`;
 		this.testLibs = [
-			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.css',
+//			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.css',
 			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
 			'./node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
 			'./node_modules/jasmine-core/lib/jasmine-core/boot.js',
@@ -104,13 +104,14 @@ gulp.task('default', gulp.series('serve'));
 
 gulp.task('tests:compile', testsCompile);
 gulp.task('tests:build:index', testsIndexBuild);
-gulp.task('tests:copy:libs'. testsCopyLibs);/*
+gulp.task('tests:copy:libs'. testsCopyLibs);
 gulp.task('tests:clean', testsClean);
 gulp.task('tests:watch', testsWatch);
-gulp.task('tests:build', gulp.series(gulp.parallel('tests:copy:libs', 'tests:compile'), 'tests:build:index'));
+//gulp.task('tests:build', gulp.series(gulp.parallel('tests:copylibs', 'tests:compile'), 'tests:buildindex'));
+gulp.task('tests:build', gulp.series('tests:copy:libs', 'tests:compile', 'tests:build:index'));
 gulp.task('tests:clean:build', gulp.series('tests:clean', 'tests:build'));
 gulp.task('tests:run', gulp.parallel('tests:watch', gulp.series('tests:clean:build', testsRun)));
-*/
+
 function tsLint() {
 	return gulp
 		.src(settings.allTypeScript)
