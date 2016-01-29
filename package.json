@@ -53,11 +53,11 @@
     "sort-stream": "^1.0.1",
     "superstatic": "^4.0.1",
     "tslint": "^3.2.1",
-    "typescript": "^1.8.0-dev.20160124",
-    "typings": "^0.6.0"
+    "typescript": "^1.8.0",
+    "typings": "^0.6.3"
   },
   "dependencies": {
-    "angular2": "^2.0.0-beta.1",
+    "angular2": "^2.0.0-beta.2",
     "es6-promise": "^3.0.2",
     "es6-shim": "^0.34.2",
     "gulp": "github:gulpjs/gulp#4.0",
