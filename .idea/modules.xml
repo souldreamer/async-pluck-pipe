@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/angular2-starter.iml" filepath="$PROJECT_DIR$/.idea/angular2-starter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/async-pluck-pipe.iml" filepath="$PROJECT_DIR$/.idea/async-pluck-pipe.iml" />
     </modules>
   </component>
 </project>

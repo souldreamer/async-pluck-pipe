@@ -66,7 +66,6 @@
     "rxjs": "^5.0.0-beta.1",
     "systemjs": "^0.19.15",
     "tslint": "^3.3.0",
-    "typescript": "^1.8.0-dev.20160124",
     "zone.js": "^0.5.10"
   }
 }

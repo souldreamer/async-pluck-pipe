@@ -23,7 +23,6 @@ class Settings {
 			'./typings/**/*.d.ts'
 		];
 		this.typingsOutputPath = './typings/typescriptApp.d.ts';
-		this.libraryTypeScriptDefinitions = './typings/**/*.ts';
 
 		this.allAssets = [
 			`${this.sourceApp}/**/*`,
@@ -58,13 +57,17 @@ class Settings {
 		this.testMainPre = `${this.testBase}/unit-tests.pre.html`;
 		this.testMain = `${this.testBase}/unit-tests.html`;
 		this.testLibs = [
-//			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.css',
 			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
 			'./node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
 			'./node_modules/jasmine-core/lib/jasmine-core/boot.js',
 			'./node_modules/systemjs/dist/system.src.js'
 		];
 		this.testLibsOutputPath = `${this.testFilesOut}/lib`;
+		this.testLibsStyles = [
+			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.css'
+		];
+		this.testLibsStylesOutputPath = `${this.testLibsOutputPath}/styles`;
+		this.testLibsStylesOutGlob = `${this.testLibsStylesOutputPath}/**/*.*`;
 	}
 }
 const settings = new Settings();
@@ -121,7 +124,7 @@ tsLint.description = 'Linting TypeScript sources';
 
 function tsCompile() {
 	return compileTypescript(
-		[settings.allTypeScript, settings.libraryTypeScriptDefinitions],
+		[settings.allTypeScript, ...settings.allTypings],
 		settings.tsOutputPath,
 		settings.typingsOutputPath
 	);
@@ -267,7 +270,7 @@ function copyAssets() {
 copyAssets.description = 'Copying assets to distribution folder';
 
 function testsCompile() {
-	return compileTypescript(settings.testFiles, settings.testFilesOut);
+	return compileTypescript([...settings.testFiles, ...settings.allTypings], settings.testFilesOut);
 }
 testsCompile.description = 'Compiling test files';
 
@@ -295,6 +298,10 @@ function testsIndexBuild() {
 	return gulp
 		.src(settings.testMainPre)
 		.pipe(inject(
+			gulp.src(settings.testLibsStylesOutGlob, {read: false}),
+			{ relative: true, starttag: '<!-- inject:libs:css -->'}
+		))
+		.pipe(inject(
 			gulp.src(settings.testFilesOutGlob, {read: false}),
 			{ relative: true, starttag: '<!-- inject:tests -->'}
 		))
@@ -313,9 +320,14 @@ function testsIndexBuild() {
 testsIndexBuild.description = 'Build unit-tests.html';
 
 function testsCopyLibs() {
-	return gulp
-		.src(settings.testLibs)
-		.pipe(gulp.dest(settings.testLibsOutputPath));
+	return merge([
+		gulp
+			.src(settings.testLibs)
+			.pipe(gulp.dest(settings.testLibsOutputPath)),
+		gulp
+			.src(settings.testLibsStyles)
+			.pipe(gulp.dest(settings.testLibsStylesOutputPath))
+	]);
 }
 testsCopyLibs.description = 'Copy libs used by tests';
 

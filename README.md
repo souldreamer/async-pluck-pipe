@@ -24,7 +24,7 @@ Angular2 will still be compatible with the extended code).
 - [x] gulpfile compiles
 - [ ] actually figure out why `gulp.task(... 'tests:copy:libs' ...)` doesn't
 work while `gulp.task(... testsCopyLibs ...)` works
-- [ ] make stylesheet copying/injecting for vendor libs (e.g. `jasmine.css`)
+- [x] make stylesheet copying/injecting for vendor libs (e.g. `jasmine.css`)
 - [ ] find a way to import test files so testing actually works
 
 ## Installation
