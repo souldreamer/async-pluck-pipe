@@ -27,6 +27,9 @@ work while `gulp.task(... testsCopyLibs ...)` works
 - [x] make stylesheet copying/injecting for vendor libs (e.g. `jasmine.css`)
 - [x] find a way to import test files so testing actually works
 - [ ] make testing actually work
+- [ ] implement Karma
+- [ ] implement istanbul
+- [ ] use jasmine spies instead of `angular2/.../testing_internal` `SpyObject`
 
 ## Installation
 * run `npm install`
