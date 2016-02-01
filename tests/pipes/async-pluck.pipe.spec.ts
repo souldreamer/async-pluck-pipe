@@ -1,14 +1,6 @@
 // based on https://github.com/angular/angular/blob/master/modules/angular2/test/common/pipes/async_pipe_spec.ts
-import {
-	describe,
-	it,
-	expect,
-	beforeEach,
-	afterEach,
-	AsyncTestCompleter,
-	inject,
-	browserDetection
-} from 'angular2/testing_internal';
+import {describe, it, expect, beforeEach, afterEach, inject, injectAsync} from 'angular2/testing';
+import {browserDetection} from 'angular2/src/testing/utils';
 import {isBlank} from 'angular2/src/facade/lang';
 import {AsyncPluckPipe} from '../../src/app/pipes/async-pluck.pipe';
 import {WrappedValue} from 'angular2/core';
@@ -21,13 +13,28 @@ import {
 } from 'angular2/src/facade/async';
 import {DOM} from 'angular2/src/platform/dom/dom_adapter';
 import {ChangeDetectorRef} from 'angular2/src/core/change_detection/change_detector_ref';
-import {SpyObject, proxy} from 'angular2/src/testing/testing_internal';
+import {SpyObject} from 'angular2/src/testing/testing_internal';
+import {setBaseTestProviders} from 'angular2/testing';
+import {
+	TEST_BROWSER_PLATFORM_PROVIDERS,
+	TEST_BROWSER_APPLICATION_PROVIDERS
+} from 'angular2/platform/testing/browser';
+
+setBaseTestProviders(TEST_BROWSER_PLATFORM_PROVIDERS, TEST_BROWSER_APPLICATION_PROVIDERS);
 
 export class SpyChangeDetectorRef extends SpyObject {
 	constructor() {
 		super(ChangeDetectorRef);
 		this.spy('markForCheck');
 	}
+}
+
+function injectAsyncCallback(injectors: any[], fn: any) {
+	return injectAsync(injectors, (...params) => {
+		return new Promise((resolve) => {
+			fn(...[...params, resolve]);
+		});
+	});
 }
 
 export function main() {
@@ -50,31 +57,31 @@ export function main() {
 					() => { expect(pipe.transform(emitter)).toBe(null); });
 
 				it("should return the latest available value wrapped",
-					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					injectAsyncCallback([], (done) => {
 						pipe.transform(emitter);
 
 						ObservableWrapper.callEmit(emitter, message);
 
 						TimerWrapper.setTimeout(() => {
 							expect(pipe.transform(emitter)).toEqual(new WrappedValue(message));
-							async.done();
-						}, 0)
+							done();
+						}, 0);
 					}));
 
 				it("should return same value when nothing has changed since the last call",
-					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					injectAsyncCallback([], (done) => {
 						pipe.transform(emitter);
 						ObservableWrapper.callEmit(emitter, message);
 
 						TimerWrapper.setTimeout(() => {
 							pipe.transform(emitter);
 							expect(pipe.transform(emitter)).toBe(message);
-							async.done();
-						}, 0)
+							done();
+						}, 0);
 					}));
 
 				it("should dispose of the existing subscription when subscribing to a new observable",
-					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					injectAsyncCallback([], (done) => {
 						pipe.transform(emitter);
 
 						var newEmitter = new EventEmitter();
@@ -85,19 +92,19 @@ export function main() {
 
 						TimerWrapper.setTimeout(() => {
 							expect(pipe.transform(newEmitter)).toBe(null);
-							async.done();
-						}, 0)
+							done();
+						}, 0);
 					}));
 
 				it("should request a change detection check upon receiving a new value",
-					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					injectAsyncCallback([], (done) => {
 						pipe.transform(emitter);
 						ObservableWrapper.callEmit(emitter, message);
 
 						TimerWrapper.setTimeout(() => {
 							expect(ref.spy('markForCheck')).toHaveBeenCalled();
-							async.done();
-						}, 0)
+							done();
+						}, 0);
 					}));
 			});
 
@@ -105,16 +112,17 @@ export function main() {
 				it("should do nothing when no subscription",
 					() => { expect(() => pipe.ngOnDestroy()).not.toThrow(); });
 
-				it("should dispose of the existing subscription", inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
-					pipe.transform(emitter);
-					pipe.ngOnDestroy();
+				it("should dispose of the existing subscription",
+					injectAsyncCallback([], (done) => {
+						pipe.transform(emitter);
+						pipe.ngOnDestroy();
 
-					ObservableWrapper.callEmit(emitter, message);
+						ObservableWrapper.callEmit(emitter, message);
 
-					TimerWrapper.setTimeout(() => {
-						expect(pipe.transform(emitter)).toBe(null);
-						async.done();
-					}, 0)
+						TimerWrapper.setTimeout(() => {
+							expect(pipe.transform(emitter)).toBe(null);
+							done();
+						}, 0);
 				}));
 			});
 		});
@@ -137,31 +145,31 @@ export function main() {
 				it("should return null when subscribing to a promise",
 					() => { expect(pipe.transform(completer.promise)).toBe(null); });
 
-				it("should return the latest available value", inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+				it("should return the latest available value", injectAsyncCallback([], (done) => {
 					pipe.transform(completer.promise);
 
 					completer.resolve(message);
 
 					TimerWrapper.setTimeout(() => {
 						expect(pipe.transform(completer.promise)).toEqual(new WrappedValue(message));
-						async.done();
-					}, timer)
+						done();
+					}, timer);
 				}));
 
 				it("should return unwrapped value when nothing has changed since the last call",
-					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					injectAsyncCallback([], (done) => {
 						pipe.transform(completer.promise);
 						completer.resolve(message);
 
 						TimerWrapper.setTimeout(() => {
 							pipe.transform(completer.promise);
 							expect(pipe.transform(completer.promise)).toBe(message);
-							async.done();
-						}, timer)
+							done();
+						}, timer);
 					}));
 
 				it("should dispose of the existing subscription when subscribing to a new promise",
-					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					injectAsyncCallback([], (done) => {
 						pipe.transform(completer.promise);
 
 						var newCompleter = PromiseWrapper.completer();
@@ -172,26 +180,26 @@ export function main() {
 
 						TimerWrapper.setTimeout(() => {
 							expect(pipe.transform(newCompleter.promise)).toBe(null);
-							async.done();
-						}, timer)
+							done();
+						}, timer);
 					}));
 
 				it("should request a change detection check upon receiving a new value",
-					inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					injectAsyncCallback([], (done) => {
 						pipe.transform(completer.promise);
 						completer.resolve(message);
 
 						TimerWrapper.setTimeout(() => {
 							expect(ref.spy('markForCheck')).toHaveBeenCalled();
-							async.done();
-						}, timer)
+							done();
+						}, timer);
 					}));
 
 				describe("ngOnDestroy", () => {
 					it("should do nothing when no source",
 						() => { expect(() => pipe.ngOnDestroy()).not.toThrow(); });
 
-					it("should dispose of the existing source", inject([AsyncTestCompleter], (async: AsyncTestCompleter) => {
+					it("should dispose of the existing source", injectAsyncCallback([], (done) => {
 						pipe.transform(completer.promise);
 						expect(pipe.transform(completer.promise)).toBe(null);
 						completer.resolve(message);
@@ -200,7 +208,7 @@ export function main() {
 							expect(pipe.transform(completer.promise)).toEqual(new WrappedValue(message));
 							pipe.ngOnDestroy();
 							expect(pipe.transform(completer.promise)).toBe(null);
-							async.done();
+							done();
 						}, timer);
 					}));
 				});
@@ -222,3 +230,4 @@ export function main() {
 		});
 	});
 }
+main();
