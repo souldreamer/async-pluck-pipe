@@ -60,9 +60,17 @@ class Settings {
 			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.js',
 			'./node_modules/jasmine-core/lib/jasmine-core/jasmine-html.js',
 			'./node_modules/jasmine-core/lib/jasmine-core/boot.js',
-			'./node_modules/systemjs/dist/system.src.js'
+			'./node_modules/es6-shim/es6-shim.js',
+			'./node_modules/angular2/bundles/angular2-polyfills.js',
+			'./node_modules/systemjs/dist/system.src.js',
+			'./node_modules/rxjs/bundles/Rx.js',
+			'./node_modules/angular2/bundles/angular2.dev.js',
+			'./node_modules/angular2/bundles/router.dev.js',
+			'./node_modules/angular2/bundles/http.dev.js',
+			'./node_modules/angular2/bundles/testing.dev.js'
 		];
 		this.testLibsOutputPath = `${this.testFilesOut}/lib`;
+		this.testLibsOutGlob = [`${this.testLibsOutputPath}/**/*.js`];
 		this.testLibsStyles = [
 			'./node_modules/jasmine-core/lib/jasmine-core/jasmine.css'
 		];
@@ -301,10 +309,10 @@ function testsIndexBuild() {
 			gulp.src(settings.testLibsStylesOutGlob, {read: false}),
 			{ relative: true, starttag: '<!-- inject:libs:css -->'}
 		))
-		.pipe(inject(
-			gulp.src(settings.testFilesOutGlob, {read: false}),
-			{ relative: true, starttag: '<!-- inject:tests -->'}
-		))
+//		.pipe(inject(
+//			gulp.src(settings.testFilesOutGlob, {read: false}),
+//			{ relative: true, starttag: '<!-- inject:tests -->'}
+//		))
 		.pipe(inject(
 			gulp
 				.src(`${settings.testLibsOutputPath}/*.js`, {read: false})
@@ -312,6 +320,18 @@ function testsIndexBuild() {
 			{
 				relative: true,
 				starttag: '<!-- inject:libs -->'
+			}
+		))
+		.pipe(inject(
+			gulp.src([
+				settings.testFilesOutGlob,
+				...(settings.testLibsOutGlob.map(lib => `!${lib}`))
+			], {read: false}),
+			{
+				relative: true,
+				starttag: '/* inject:js:imports */',
+				endtag: '/* endinject */',
+				transform: (filepath) => `System.import('${filepath}');`
 			}
 		))
 		.pipe(rename(settings.testMain))
