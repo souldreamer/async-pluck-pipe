@@ -100,6 +100,7 @@ const sortStream = require('sort-stream');
 const print = require('gulp-print');
 const order = require('gulp-order');
 const rename = require('gulp-rename');
+const karmaServer = require('karma').Server;
 
 gulp.task('ts:lint', tsLint);
 gulp.task('ts:compile', tsCompile);
@@ -121,6 +122,7 @@ gulp.task('tests:watch', testsWatch);
 gulp.task('tests:build', gulp.series(gulp.parallel(testsCopyLibs, 'tests:compile'), 'tests:build:index'));
 gulp.task('tests:clean:build', gulp.series('tests:clean', 'tests:build'));
 gulp.task('tests:run', gulp.parallel('tests:watch', gulp.series('tests:clean:build', testsRun)));
+gulp.task('tests:karma', gulp.series('tests:build', testsKarma));
 
 function tsLint() {
 	return gulp
@@ -361,6 +363,15 @@ function testsWatch() {
 	gulp.watch([settings.testFiles], gulp.series('tests:build'));
 }
 testsWatch.description = 'Watch test files for changes';
+
+function testsKarma() {
+	return new Promise((resolve) => {
+		new karmaServer({
+			configFile: __dirname + '/karma.conf.js',
+			singleRun: true
+		}, resolve).start();
+	});
+}
 
 //**************************** UTILITY FUNCTIONS ****************************
 
