@@ -30,7 +30,7 @@ export class SpyChangeDetectorRef extends SpyObject {
 }
 
 function injectAsyncCallback(injectors: any[], fn: any) {
-	return injectAsync(injectors, (...params) => {
+	return injectAsync(injectors, (...params: any[]) => {
 		return new Promise((resolve) => {
 			fn(...[...params, resolve]);
 		});
@@ -57,7 +57,7 @@ export function main() {
 					() => { expect(pipe.transform(emitter)).toBe(null); });
 
 				it("should return the latest available value wrapped",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(emitter);
 
 						ObservableWrapper.callEmit(emitter, message);
@@ -69,7 +69,7 @@ export function main() {
 					}));
 
 				it("should return same value when nothing has changed since the last call",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(emitter);
 						ObservableWrapper.callEmit(emitter, message);
 
@@ -81,7 +81,7 @@ export function main() {
 					}));
 
 				it("should dispose of the existing subscription when subscribing to a new observable",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(emitter);
 
 						var newEmitter = new EventEmitter();
@@ -97,7 +97,7 @@ export function main() {
 					}));
 
 				it("should request a change detection check upon receiving a new value",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(emitter);
 						ObservableWrapper.callEmit(emitter, message);
 
@@ -113,7 +113,7 @@ export function main() {
 					() => { expect(() => pipe.ngOnDestroy()).not.toThrow(); });
 
 				it("should dispose of the existing subscription",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(emitter);
 						pipe.ngOnDestroy();
 
@@ -145,7 +145,7 @@ export function main() {
 				it("should return null when subscribing to a promise",
 					() => { expect(pipe.transform(completer.promise)).toBe(null); });
 
-				it("should return the latest available value", injectAsyncCallback([], (done) => {
+				it("should return the latest available value", injectAsyncCallback([], (done: any) => {
 					pipe.transform(completer.promise);
 
 					completer.resolve(message);
@@ -157,7 +157,7 @@ export function main() {
 				}));
 
 				it("should return unwrapped value when nothing has changed since the last call",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(completer.promise);
 						completer.resolve(message);
 
@@ -169,7 +169,7 @@ export function main() {
 					}));
 
 				it("should dispose of the existing subscription when subscribing to a new promise",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(completer.promise);
 
 						var newCompleter = PromiseWrapper.completer();
@@ -185,7 +185,7 @@ export function main() {
 					}));
 
 				it("should request a change detection check upon receiving a new value",
-					injectAsyncCallback([], (done) => {
+					injectAsyncCallback([], (done: any) => {
 						pipe.transform(completer.promise);
 						completer.resolve(message);
 
@@ -199,7 +199,7 @@ export function main() {
 					it("should do nothing when no source",
 						() => { expect(() => pipe.ngOnDestroy()).not.toThrow(); });
 
-					it("should dispose of the existing source", injectAsyncCallback([], (done) => {
+					it("should dispose of the existing source", injectAsyncCallback([], (done: any) => {
 						pipe.transform(completer.promise);
 						expect(pipe.transform(completer.promise)).toBe(null);
 						completer.resolve(message);
