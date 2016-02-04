@@ -1,6 +1,7 @@
 <html>
 <head>
 	<title>Tests</title>
+	<base href="/tests">
 	<!-- inject:libs:css -->
 	<link rel="stylesheet" href="../node_modules/jasmine-core/lib/jasmine-core/jasmine.css">
 	<!-- endinject -->
@@ -10,17 +11,24 @@
 	<script src="../node_modules/jasmine-core/lib/jasmine-core/boot.js"></script>
 	<!-- endinject -->
 	<!-- inject:tests -->
-	<script src="compiled/pipes/async-pluck.pipe.spec.js"></script>
 	<!-- endinject -->
 </head>
 <body>
 	<script>
 		System.config({
 			packages: {
-				compiled: {
+				tests: {
+					format: 'register',
+					defaultExtension: 'js'
+				},
+				dist: {
 					format: 'register',
 					defaultExtension: 'js'
 				}
+			},
+			map: {
+				'tests/src': 'dist/js',
+				'../../src': 'dist/js'
 			}
 		});
 		/* inject:js:imports */

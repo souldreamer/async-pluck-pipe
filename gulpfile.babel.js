@@ -294,9 +294,9 @@ function testsRun() {
 		logPrefix: 'async-pipe-tests',
 		reloadDelay: 0,
 		server: {
-			baseDir: [settings.testBase],
-			index: settings.testMain.replace(`${settings.testBase}/`, '')
-		}
+			baseDir: ['.']
+		},
+		startPath: settings.testMain
 	});
 
 }
@@ -309,7 +309,11 @@ function testsIndexBuild() {
 		.src(settings.testMainPre)
 		.pipe(inject(
 			gulp.src(settings.testLibsStylesOutGlob, {read: false}),
-			{ relative: true, starttag: '<!-- inject:libs:css -->'}
+			{
+				relative: true,
+				starttag: '<!-- inject:libs:css -->',
+				transform: (filepath) => `<link rel="stylesheet" href="tests/${filepath}">`
+			}
 		))
 //		.pipe(inject(
 //			gulp.src(settings.testFilesOutGlob, {read: false}),
@@ -321,7 +325,8 @@ function testsIndexBuild() {
 				.pipe(sortStream(keepArrayOrderSort(libFileNames))),
 			{
 				relative: true,
-				starttag: '<!-- inject:libs -->'
+				starttag: '<!-- inject:libs -->',
+				transform: (filepath) => `<script src="tests/${filepath}"></script>`
 			}
 		))
 		.pipe(inject(
@@ -333,7 +338,7 @@ function testsIndexBuild() {
 				relative: true,
 				starttag: '/* inject:js:imports */',
 				endtag: '/* endinject */',
-				transform: (filepath) => `System.import('${filepath}');`
+				transform: (filepath) => `System.import('tests/${filepath}');`
 			}
 		))
 		.pipe(rename(settings.testMain))
