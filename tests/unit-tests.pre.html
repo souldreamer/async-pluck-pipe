@@ -24,11 +24,12 @@
 				dist: {
 					format: 'register',
 					defaultExtension: 'js'
+				},
+				'tests/src': {
+					map: {
+						'*': 'dist/js/*'
+					}
 				}
-			},
-			map: {
-				'tests/src': 'dist/js',
-				'../../src': 'dist/js'
 			}
 		});
 		/* inject:js:imports */

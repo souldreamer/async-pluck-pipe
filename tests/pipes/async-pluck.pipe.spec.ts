@@ -2,23 +2,17 @@
 import {describe, it, expect, beforeEach, afterEach, inject, injectAsync} from 'angular2/testing';
 import {browserDetection} from 'angular2/src/testing/utils';
 import {isBlank} from 'angular2/src/facade/lang';
-import {AsyncPluckPipe} from '../../src/app/pipes/async-pluck.pipe';
 import {WrappedValue} from 'angular2/core';
-import {
-	EventEmitter,
-	ObservableWrapper,
-	PromiseWrapper,
-	TimerWrapper,
-	PromiseCompleter
-} from 'angular2/src/facade/async';
+import {EventEmitter, ObservableWrapper, PromiseWrapper, TimerWrapper, PromiseCompleter} from 'angular2/src/facade/async';
 import {DOM} from 'angular2/src/platform/dom/dom_adapter';
 import {ChangeDetectorRef} from 'angular2/src/core/change_detection/change_detector_ref';
-import {SpyObject} from 'angular2/src/testing/testing_internal';
 import {setBaseTestProviders} from 'angular2/testing';
-import {
-	TEST_BROWSER_PLATFORM_PROVIDERS,
-	TEST_BROWSER_APPLICATION_PROVIDERS
-} from 'angular2/platform/testing/browser';
+import {TEST_BROWSER_PLATFORM_PROVIDERS, TEST_BROWSER_APPLICATION_PROVIDERS} from 'angular2/platform/testing/browser';
+
+// TODO: change this to jasmine spies somehow
+import {SpyObject} from 'angular2/src/testing/testing_internal';
+
+import {AsyncPluckPipe} from '../../src/app/pipes/async-pluck.pipe';
 
 setBaseTestProviders(TEST_BROWSER_PLATFORM_PROVIDERS, TEST_BROWSER_APPLICATION_PROVIDERS);
 

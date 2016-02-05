@@ -164,6 +164,7 @@ function watch() {
 	], gulp.series('copy:assets'));
 	gulp.watch([`${settings.sourceApp}/**/*.css`], gulp.series('copy:assets'));
 	gulp.watch([`${settings.sourceApp}/**/*.js`], gulp.series('copy:assets')); //?
+	return Promise.resolve();
 }
 watch.description = 'Watching TypeScript sources';
 
@@ -291,6 +292,7 @@ function testsRun() {
 		injectChanges: true,
 		logFileChanges: true,
 		logLevel: 'info',
+		logConnections: true,
 		logPrefix: 'async-pipe-tests',
 		reloadDelay: 0,
 		server: {
@@ -298,7 +300,6 @@ function testsRun() {
 		},
 		startPath: settings.testMain
 	});
-
 }
 testsRun.description = 'Running tests';
 
@@ -315,10 +316,6 @@ function testsIndexBuild() {
 				transform: (filepath) => `<link rel="stylesheet" href="tests/${filepath}">`
 			}
 		))
-//		.pipe(inject(
-//			gulp.src(settings.testFilesOutGlob, {read: false}),
-//			{ relative: true, starttag: '<!-- inject:tests -->'}
-//		))
 		.pipe(inject(
 			gulp
 				.src(`${settings.testLibsOutputPath}/*.js`, {read: false})
@@ -366,6 +363,7 @@ testsClean.description = 'Clean compiled test files';
 function testsWatch() {
 	gulp.watch([settings.testMainPre], gulp.series('tests:build:index'));
 	gulp.watch([settings.testFiles], gulp.series('tests:build'));
+	return Promise.resolve();
 }
 testsWatch.description = 'Watch test files for changes';
 
