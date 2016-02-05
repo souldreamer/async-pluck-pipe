@@ -26,10 +26,13 @@ Angular2 will still be compatible with the extended code).
 work while `gulp.task(... testsCopyLibs ...)` works
 - [x] make stylesheet copying/injecting for vendor libs (e.g. `jasmine.css`)
 - [x] find a way to import test files so testing actually works
-- [ ] make testing actually work
-- [ ] implement Karma
-- [ ] implement istanbul
-- [ ] use jasmine spies instead of `angular2/.../testing_internal` `SpyObject`
+- [x] make testing actually work
+- [ ] make `AsyncPipe` tests work
+- [ ] add tests for the `AsyncPluckPipe` functionality that diverges from the
+base `AsyncPipe` functionality
+- [ ] implement code coverage of some sort
+- [x] use jasmine spies instead of `angular2/.../testing_internal` `SpyObject` -
+copied from Angular2 source for `SpyObject`
 
 ## Installation
 * run `npm install`

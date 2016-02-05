@@ -15,20 +15,24 @@
 </head>
 <body>
 	<script>
+		describe('very basic functionality', function() {
+			it('works', function() {
+				expect(true).toEqual(true);
+			})
+		});
+
 		System.config({
 			packages: {
 				tests: {
 					format: 'register',
-					defaultExtension: 'js'
+					defaultExtension: 'js',
+					map: {
+						'../../src': 'dist/js'
+					}
 				},
 				dist: {
 					format: 'register',
 					defaultExtension: 'js'
-				},
-				'tests/src': {
-					map: {
-						'*': 'dist/js/*'
-					}
 				}
 			}
 		});
