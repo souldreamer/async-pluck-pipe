@@ -90,7 +90,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const del = require('del');
 const tsProject = tsc.createProject('tsconfig.json', {typescript: require('typescript')});
 const merge = require('merge2');
-const browserSync = require('browser-sync');
+const browserSync = require('browser-sync').create(undefined, undefined);
 const superstatic = require('superstatic');
 const typedoc = require('gulp-typedoc');
 const historyApiFallback = require('connect-history-api-fallback');
@@ -156,20 +156,20 @@ function clean() {
 clean.description = 'Cleaning entire dist';
 
 function watch() {
-	gulp.watch([settings.allTypeScript], gulp.series(/*'ts:lint',*/ 'ts:compile'));
-	gulp.watch([settings.indexHtml], gulp.series('copy:assets'));
+	gulp.watch([settings.allTypeScript], gulp.series(/*'ts:lint',*/ 'ts:compile')).on('change', () => browserSync.reload());
+	gulp.watch([settings.indexHtml], gulp.series('copy:assets')).on('change', () => browserSync.reload());
 	gulp.watch([
 		`${settings.sourceApp}/**/*.html`,
 		`!${settings.indexHtml}`
-	], gulp.series('copy:assets'));
-	gulp.watch([`${settings.sourceApp}/**/*.css`], gulp.series('copy:assets'));
-	gulp.watch([`${settings.sourceApp}/**/*.js`], gulp.series('copy:assets')); //?
+	], gulp.series('copy:assets')).on('change', () => browserSync.reload());
+	gulp.watch([`${settings.sourceApp}/**/*.css`], gulp.series('copy:assets')).on('change', () => browserSync.reload());
+	gulp.watch([`${settings.sourceApp}/**/*.js`], gulp.series('copy:assets')).on('change', () => browserSync.reload()); //?
 	return Promise.resolve();
 }
 watch.description = 'Watching TypeScript sources';
 
 function serve() {
-	browserSync({
+	browserSync.init({
 		port: 3000,
 		files: settings.watchFiles,
 		injectChanges: true,
@@ -286,9 +286,9 @@ function testsCompile() {
 testsCompile.description = 'Compiling test files';
 
 function testsRun() {
-	browserSync({
+	browserSync.init({
 		port: 3050,
-		files: [settings.testFilesOutGlob, settings.testMain],
+		files: [settings.testFilesOutGlob, settings.testMain, settings.watchFiles],
 		injectChanges: true,
 		logFileChanges: true,
 		logLevel: 'info',
@@ -361,8 +361,9 @@ function testsClean() {
 testsClean.description = 'Clean compiled test files';
 
 function testsWatch() {
-	gulp.watch([settings.testMainPre], gulp.series('tests:build:index'));
-	gulp.watch([settings.testFiles], gulp.series('tests:build'));
+	gulp.watch([settings.testMainPre], gulp.series('tests:build:index')).on('change', () => browserSync.reload());
+	gulp.watch([settings.testFiles], gulp.series('tests:build')).on('change', () => browserSync.reload());
+	watch();
 	return Promise.resolve();
 }
 testsWatch.description = 'Watch test files for changes';
