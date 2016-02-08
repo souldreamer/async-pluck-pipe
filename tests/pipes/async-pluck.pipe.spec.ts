@@ -19,14 +19,14 @@ interface GuinessCompatibleSpy extends jasmine.Spy {
 	 * function. */
 	andCallFake(fn: Function): GuinessCompatibleSpy;
 	/** removes all recorded calls */
-	reset();
+	reset(): any;
 }
 
 class SpyObject {
-	constructor(type = null) {
+	constructor(type: any = null) {
 		if (type) {
 			for (var prop in type.prototype) {
-				var m = null;
+				var m: any = null;
 				try {
 					m = type.prototype[prop];
 				} catch (e) {
@@ -42,18 +42,18 @@ class SpyObject {
 		}
 	}
 	// Noop so that SpyObject has the same interface as in Dart
-	noSuchMethod(args) {}
+	noSuchMethod(args: any) {}
 
-	spy(name) {
+	spy(name: any) {
 		if (!this[name]) {
 			this[name] = this._createGuinnessCompatibleSpy(name);
 		}
 		return this[name];
 	}
 
-	prop(name, value) { this[name] = value; }
+	prop(name: any, value: any) { this[name] = value; }
 
-	static stub(object = null, config = null, overrides = null) {
+	static stub(object: any = null, config: any = null, overrides: any = null) {
 		if (!(object instanceof SpyObject)) {
 			overrides = config;
 			config = object;
@@ -61,12 +61,12 @@ class SpyObject {
 		}
 
 		var m = StringMapWrapper.merge(config, overrides);
-		StringMapWrapper.forEach(m, (value, key) => { object.spy(key).andReturn(value); });
+		StringMapWrapper.forEach(m, (value: any, key: any) => { object.spy(key).andReturn(value); });
 		return object;
 	}
 
 	/** @internal */
-	_createGuinnessCompatibleSpy(name): GuinessCompatibleSpy {
+	_createGuinnessCompatibleSpy(name: any): GuinessCompatibleSpy {
 		var newSpy: GuinessCompatibleSpy = <any>jasmine.createSpy(name);
 		newSpy.andCallFake = <any>newSpy.and.callFake;
 		newSpy.andReturn = <any>newSpy.and.returnValue;
