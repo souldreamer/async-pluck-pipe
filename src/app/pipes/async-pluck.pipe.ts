@@ -35,12 +35,13 @@ implements PipeTransform, OnDestroy {
 		obj: Observable<any> | Promise<any> | EventEmitter<any>,
 		args?: any[]
 	): any {
-		let value: any = ChangeDetectionUtil.unwrapValue(super.transform(obj, args));
+		let originalValue: any = super.transform(obj, args);
+		let value: any = ChangeDetectionUtil.unwrapValue(originalValue);
 		if (isPresent(args)) {
 			for (let arg of args) {
 				if (isPresent(value)) value = value[arg];
 			}
 		}
-		return this._lastValue === value ? value : WrappedValue.wrap(this._lastValue = value);
+		return this._lastValue === value || !(originalValue instanceof WrappedValue) ? value : WrappedValue.wrap(this._lastValue = value);
 	}
 }
