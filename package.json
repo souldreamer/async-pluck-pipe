@@ -33,6 +33,7 @@
     "del": "^2.2.0",
     "es6-module-loader": "^0.17.10",
     "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-changed": "^1.3.0",
     "gulp-concat": "^2.6.0",
     "gulp-debug": "^2.1.2",
     "gulp-if": "^2.0.0",

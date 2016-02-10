@@ -100,6 +100,7 @@ const sortStream = require('sort-stream');
 const print = require('gulp-print');
 const order = require('gulp-order');
 const rename = require('gulp-rename');
+const changed = require('gulp-changed');
 const karmaServer = require('karma').Server;
 
 gulp.task('ts:lint', tsLint);
@@ -223,6 +224,7 @@ tsDoc.description = 'Generating TypeScript documentation';
 function copyLibs() {
 	return gulp
 		.src(settings.jsLibs)
+		.pipe(changed(settings.libOutputPath))
 		.pipe(gulp.dest(settings.libOutputPath));
 }
 copyLibs.description = 'Copying libs to distribution folder';
@@ -230,6 +232,7 @@ copyLibs.description = 'Copying libs to distribution folder';
 function copyIndex() {
 	return gulp
 		.src(settings.indexHtml)
+		.pipe(changed(settings.dist))
 		.pipe(gulp.dest(settings.dist));
 }
 copyLibs.description = 'Copying index HTML file to distribution folder';
@@ -275,7 +278,8 @@ function copyAssets() {
 			.pipe(gulp.dest(settings.dist)),
 		gulp
 			.src([...settings.allAssets, `!${settings.indexHtml}`])
-		.pipe(gulp.dest(settings.dist))
+			.pipe(changed(settings.dist))
+			.pipe(gulp.dest(settings.dist))
 	]);
 }
 copyAssets.description = 'Copying assets to distribution folder';
@@ -339,6 +343,7 @@ function testsIndexBuild() {
 			}
 		))
 		.pipe(rename(settings.testMain))
+		.pipe(changed('.'))
 		.pipe(gulp.dest('.'));
 }
 testsIndexBuild.description = 'Build unit-tests.html';
@@ -347,9 +352,11 @@ function testsCopyLibs() {
 	return merge([
 		gulp
 			.src(settings.testLibs)
+			.pipe(changed(settings.testLibsOutputPath))
 			.pipe(gulp.dest(settings.testLibsOutputPath)),
 		gulp
 			.src(settings.testLibsStyles)
+			.pipe(changed(settings.testLibsStylesOutputPath))
 			.pipe(gulp.dest(settings.testLibsStylesOutputPath))
 	]);
 }
