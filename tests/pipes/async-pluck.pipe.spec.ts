@@ -289,5 +289,157 @@ export function main() {
 			});
 		});
 	});
+
+	describe('Pluck functionality', () => {
+		var emitter: EventEmitter<any>;
+		var pipe: AsyncPluckPipe;
+		var ref: SpyChangeDetectorRef;
+		var planetObject: any = {planet: 'earth'};
+		var helloObject: any = {who: 'world', where: planetObject};
+		var object: any = {hello: helloObject, goodbye: 'cruel fate'};
+		var array: any[] = [planetObject, {hello: 'world'}, {goodbye: 'cruel world'}, {hello: 'life', goodbye: 'adieu'}];
+
+		beforeEach(() => {
+			emitter = new EventEmitter();
+			ref = new SpyChangeDetectorRef();
+			pipe = new AsyncPluckPipe(<any>ref);
+		});
+
+		describe('when run on an Object', () => {
+			it('should pluck a direct scalar property of the object',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, object);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['goodbye']))
+							.toEqual(new WrappedValue('cruel fate'));
+						done();
+					}, 0);
+				}));
+
+			it('should pluck a direct object property of the object',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, object);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['hello']))
+							.toEqual(new WrappedValue(helloObject));
+						done();
+					}, 0);
+				}));
+
+			it('should pluck a scalar sub-property of a direct property of the object',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, object);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['hello', 'who']))
+							.toEqual(new WrappedValue('world'));
+						done();
+					}, 0);
+				}));
+
+			it('should pluck an object sub-property of a direct property of the object',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, object);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['hello', 'where']))
+							.toEqual(new WrappedValue(planetObject));
+						done();
+					}, 0);
+				}));
+
+			it('should pluck a scalar sub-property of an object sub-property of a direct property of the object',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, object);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['hello', 'where', 'planet']))
+							.toEqual(new WrappedValue('earth'));
+						done();
+					}, 0);
+				}));
+
+			it('should return undefined if the property doesn\'t exist',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, object);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['n/a']))
+							.toEqual(undefined);
+						done();
+					}, 0);
+				}));
+
+			it('should return undefined if trying to access a sub-property of a property that doesn\'t exist',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, object);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['n/a', 'sub-n/a']))
+							.toEqual(undefined);
+						done();
+					}, 0);
+				}));
+		});
+
+		describe('when run on an Array', () => {
+			it('should pluck the element at an array index',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, array);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, [0]))
+							.toEqual(new WrappedValue(planetObject));
+						done();
+					}, 0);
+				}));
+
+			it('should return an array when given a non-numeric property name, similar to _.pluck()',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, array);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['hello']))
+							.toEqual(new WrappedValue([undefined, 'world', undefined, 'life']));
+						done();
+					}, 0);
+				}));
+		});
+
+		describe('when run on a scalar value', () => {
+			it('should return undefined when trying to access a direct property',
+				injectAsyncCallback([], (done: any) => {
+					pipe.transform(emitter);
+
+					ObservableWrapper.callEmit(emitter, 1);
+
+					TimerWrapper.setTimeout(() => {
+						expect(pipe.transform(emitter, ['n/a']))
+							.toEqual(undefined);
+						done();
+					}, 0);
+				}));
+		});
+	});
 }
 main();
