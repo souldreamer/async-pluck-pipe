@@ -31,6 +31,10 @@ implements PipeTransform, OnDestroy {
 
 	private _lastValue: any;
 
+	private isInt(possibleNumber: any): boolean {
+		return Number(possibleNumber) === possibleNumber && possibleNumber % 1 === 0;
+	}
+
 	transform(
 		obj: Observable<any> | Promise<any> | EventEmitter<any>,
 		args?: any[]
@@ -39,7 +43,25 @@ implements PipeTransform, OnDestroy {
 		let value: any = ChangeDetectionUtil.unwrapValue(originalValue);
 		if (isPresent(args)) {
 			for (let arg of args) {
-				if (isPresent(value)) value = value[arg];
+				if (isPresent(value)) {
+					let isArray = Array.isArray(value);
+					let isInt = this.isInt(arg);
+
+					if (isArray && isInt || !isArray) {
+						value = value[arg];
+					} else {
+						let arrValue: any[] = <any[]>value;
+						let temp: any[] = [];
+						for (let i = 0; i < arrValue.length; i++) {
+							if (isPresent(arrValue[i])) {
+								temp.push(arrValue[i][arg]);
+							} else {
+								temp.push(arrValue[i]);
+							}
+						}
+						value = <any>temp;
+					}
+				}
 			}
 		}
 		return this._lastValue === value || !(originalValue instanceof WrappedValue) ? value : WrappedValue.wrap(this._lastValue = value);
