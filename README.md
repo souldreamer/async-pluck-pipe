@@ -17,7 +17,7 @@ Angular2 will still be compatible with the extended code).
 
 ## Todo:
 - [ ] docs: improve/write documentation
-- [ ] test: testing
+- [x] test: testing
 - [ ] fix: `gulp ts:lint` errors out
 
 ### Testing todo:
@@ -27,8 +27,8 @@ work while `gulp.task(... testsCopyLibs ...)` works
 - [x] make stylesheet copying/injecting for vendor libs (e.g. `jasmine.css`)
 - [x] find a way to import test files so testing actually works
 - [x] make testing actually work
-- [ ] make `AsyncPipe` tests work
-- [ ] add tests for the `AsyncPluckPipe` functionality that diverges from the
+- [x] make `AsyncPipe` tests work
+- [x] add tests for the `AsyncPluckPipe` functionality that diverges from the
 base `AsyncPipe` functionality
 - [ ] implement code coverage of some sort
 - [x] use jasmine spies instead of `angular2/.../testing_internal` `SpyObject` -
